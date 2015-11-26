@@ -1,0 +1,58 @@
+	<html>
+	<head>
+		<title>Tree Fractal</title>
+		<style>
+			body {
+			  overflow: hidden;
+			  background: #7f8c8d;
+			}
+		</style>
+		<script src="http://sclark.io/logo.js"></script>
+	</head>
+	<body>
+		<script type='text/javascript'>
+			var canvas = document.createElement("canvas");
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			canvas.onmousemove = function(e){
+			    ctx.clearRect (0 , 0, canvas.width, canvas.height);
+			    THETA_DIFF = e.clientY/canvas.height*Math.PI/2;
+			    MAX_DEPTH = e.clientX/canvas.width*10;
+			    branch(Math.PI/2, canvas.width/2, canvas.height/2);
+			}
+			document.body.appendChild(canvas);
+
+			MAX_DEPTH = 5;
+			THETA_DIFF = Math.PI/12;
+			BRANCH_LEN = (Math.min(canvas.width, canvas.height)/2)/10;
+
+			var ctx = canvas.getContext("2d");
+			gen = 0;
+
+			branch(Math.PI/2, canvas.width/2, canvas.height/2);
+
+			function branch(theta, x, y) {
+			    gen++;
+			    
+			    ctx.beginPath();
+			    ctx.moveTo(x, y);
+			    ctx.lineTo(x+dx(theta), y-dy(theta));
+			    ctx.stroke();
+			    
+			    if (gen < MAX_DEPTH) {
+			        branch(theta-THETA_DIFF, x+dx(theta), y-dy(theta));
+			        branch(theta+THETA_DIFF, x+dx(theta), y-dy(theta));
+			    }
+			    
+			    gen--;
+			}
+
+			function dx(theta) {
+			    return (BRANCH_LEN)*Math.cos(theta);
+			}
+			function dy(theta) {
+			    return (BRANCH_LEN)*Math.sin(theta);
+			}
+		</script>
+	</body>
+</html>
