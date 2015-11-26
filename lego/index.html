@@ -1,0 +1,236 @@
+<html>
+	<head>
+		<title>Lego Price Estimator</title>
+		<link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+		<script>
+
+            var m_lbs = 0.00253973;
+            var m_kg = 0.00115200;
+            var usd_per_gbp = 0.65;
+            var gbp_per_eur = 1.36;
+            var eur_per_usd = 1.14;
+            var prev_type = "";
+            var disclaimer_timeout;
+
+            function round(num, places) {
+            	var power = Math.pow(10, places);
+            	return Math.round(num * power) / power;
+            }
+
+            function convert_type() {
+                var new_type = document.getElementById('type').value;
+                var amnt = document.getElementById('amnt').value;
+                if (new_type === prev_type || amnt === "") return;
+                amnt = parseFloat(amnt);
+
+                while (prev_type != new_type) {
+                    if (prev_type === "lbs") {
+                        prev_type = "pieces";
+                        amnt = amnt / m_lbs;
+                    }
+                    else if (prev_type === "pieces") {
+                        prev_type = "kg";
+                        amnt = amnt * m_kg;
+                    }
+                    else if (prev_type === "kg") {
+                        prev_type = "lbs";
+                        amnt = amnt * (m_lbs / m_kg);
+                    }
+                }
+
+                document.getElementById('amnt').value = amnt;
+                calculate();
+            }
+
+            function convert_unit() {
+                var new_unit = document.getElementById('unit').value;
+                var price = document.getElementById('price').value;
+                if (new_unit === prev_unit || price === "") return;
+                price = parseFloat(price);
+                disclaimer_show();
+
+                while (prev_unit != new_unit) {
+                    if (prev_unit === "USD") {
+                        prev_unit = "GBP";
+                        price = price * usd_per_gbp;
+                    }
+                    else if (prev_unit === "GBP") {
+                        prev_unit = "EUR";
+                        price = price * gbp_per_eur;
+                    }
+                    else if (prev_unit === "EUR") {
+                        prev_unit = "USD";
+                        price = price * eur_per_usd;
+                    }
+                }
+
+                document.getElementById('price').value = price;
+                calculate();
+            }
+
+            function calculate() {
+                var amnt = document.getElementById('amnt').value;
+                var price = document.getElementById('price').value;
+                if (amnt === "" || price === "") return;
+                var type = document.getElementById('type').value;
+                var unit = document.getElementById('unit').value;
+
+                if (type === "lbs")
+                    amnt = parseFloat(amnt) / m_lbs;
+                else if (type === "kg")
+                    amnt = parseFloat(amnt) / m_kg;
+                else if (type === "pieces") 
+                    amnt = parseFloat(amnt);
+
+                var cpb = price/amnt;
+                document.getElementById('cpb').value = round(cpb, 3).toString() + " " + unit + " per lego";
+            }
+
+            function disclaimer_show() {
+                clearTimeout(disclaimer_timeout);
+                document.getElementById('disclaimer').style.opacity = "1";
+                disclaimer_timeout = setTimeout(disclaimer_hide, 10000);
+            }
+
+            function disclaimer_hide() {
+                document.getElementById('disclaimer').style.opacity = "0";
+            }
+
+			function onload() {
+				document.getElementById('amnt').addEventListener('keyup', calculate);
+                document.getElementById('price').addEventListener('keyup', calculate);
+
+                document.getElementById('type').addEventListener('change', convert_type);
+                prev_type = document.getElementById('type').value;
+                document.getElementById('unit').addEventListener('change', convert_unit);
+                prev_unit = document.getElementById('unit').value;
+			}
+
+			window.addEventListener('load', onload);
+		</script>
+		<script src="http://sclark.io/logo.js"></script>
+		<style>
+			body {
+				padding: 20px;
+				font-size: 20px;
+				font-family: Montserrat, sans-serif;
+			}
+			#container::before {
+				content: "";
+				background-image: url("lego-bg.jpg");
+				opacity: 0.6;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				position: absolute;
+				z-index: -1;
+			}
+			#container {
+				width: 100%;
+				text-align: center;
+			}
+            .fade {
+                transition: opacity 0.5s linear;
+            }
+            .card {
+                max-width: 275px;
+                margin:0 auto;
+                padding: 10px;
+                border-radius: 10px;
+                border: 3px solid #999;
+                background-color: #fff;
+                text-align: left;
+                display: inline-block;
+            }
+            .left {
+                float: left;
+                border-radius: 5px 0 0 5px;
+            }
+            .right {
+                float: right;
+                border-radius: 0 5px 5px 0;
+            }
+            .left-and-right {
+                border-radius: 5px;
+            }
+            .bigger {
+                width: 67%;
+            }
+            .smaller {
+                width: 33%;
+            }
+            .biggest {
+                width: 100%;
+            }
+            .clear {
+                clear: both;
+                overflow: auto;
+            }
+            .spacer {
+                height: 10px;
+            }
+            .tiny {
+                font-size: 15px;
+                color: gray;
+            }
+            .centered {
+                text-align: center;
+            }
+			h1 {
+				font-size: 20px;
+				font-weight: bold;
+				text-align: center;
+			}
+            input, select {
+                height: 3em;
+                font-size: 1em;
+                border: 1px solid #aaa;
+            }
+            input {
+                padding: 0.5em 0.5em;
+            }
+            select {
+                background: transparent;
+            }
+            div {
+                margin-bottom: 5px;
+            }
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div class="card">
+				<div>
+					<h1>Lego Price Estimator</h1>
+
+                    <div class="clear">
+                        <input type="text" class="bigger left" id="amnt">
+                        <select class="smaller right" id="type">
+                            <option>pieces</option>
+                            <option>lbs</option>
+                            <option>kg</option>
+                        </select>
+                    </div>
+
+                    <div class="clear">       
+    					<input type="text" class="bigger left" id="price">
+                        <select class="smaller right" id="unit">
+                            <option>USD</option>
+                            <option>EUR</option>
+                            <option>GBP</option>
+                        </select>
+                    </div>
+
+                    <div class="spacer"></div>
+
+					<input type="text" class="left-and-right" id="cpb" placeholder="Cost Per Brick" disabled="disabled">
+				</div>
+			</div>
+            <div class="spacer clear"></div>
+            <div class="card fade" id="disclaimer" style="opacity: 0;">
+                <span class="tiny">The accuracy of the exchange rates cannot be guaranted. Before conducting financial transactions, please seek out more up-to-date exchange rates.</span>
+            </div>
+        </div>
+	</body>
+</html>
