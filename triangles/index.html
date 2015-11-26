@@ -1,0 +1,63 @@
+	<html>
+	<head>
+		<title>Triangles :)</title>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			  overflow: hidden;
+			}
+		</style>
+		<script type='text/javascript'>
+			var colors = [
+				"#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e",
+				"#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50",
+				"#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6",
+				"#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"];
+			var canvas, ctx;
+
+			function fillTri(color, a, b, c) {
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.moveTo(a[0], a[1]);
+				ctx.lineTo(b[0], b[1]);
+				ctx.lineTo(c[0], c[1]);
+				ctx.closePath();
+				ctx.fill();
+			}
+
+			function getColor(i, j, parity, max) {
+				return colors[Math.floor(Math.random()*colors.length)];
+			}
+
+			function draw() {
+				var num = Math.ceil(Math.random()*40)+10;
+				var dim = Math.ceil(canvas.width/num);
+
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				for (var i = 0; i < num; i++) {
+					for (var j = 0; j < num; j++) {
+						fillTri(getColor(i,j,0,num), [dim*i, dim*j], [dim*(i+1), dim*j], [dim*(i+1), dim*(j+1)]);
+						fillTri(getColor(i,j,1,num), [dim*i, dim*j], [dim*i, dim*(j+1)], [dim*(i+1), dim*(j+1)]);
+					}
+				}
+			}
+
+			function init() {
+				canvas = document.getElementById('canvas');
+				ctx = canvas.getContext('2d');
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				draw();
+			}
+
+			window.addEventListener('load', init);
+			window.addEventListener('resize', init);
+			window.addEventListener('click', draw);
+		</script>
+		<script src="http://sclark.io/logo.js"></script>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+	</body>
+</html>
