@@ -1,0 +1,110 @@
+	<html>
+	<head>
+		<title>Dragon Fractal Clock</title>
+		<style>
+			body {
+				overflow: hidden;
+				background: #000;
+			}
+			.outer {
+				display: table;
+				position: absolute;
+				height: 100%;
+				width: 100%;
+			}
+
+			.middle {
+				display: table-cell;
+				vertical-align: middle;
+			}
+
+			.inner {
+				margin-left: auto;
+				margin-right: auto; 
+				width: 80%;
+			}
+			.canvas {
+				display: inline-block;
+				vertical-align: middle;
+			}
+		</style>
+		<script src="http://sclark.io/logo.js"></script>
+	</head>
+	<body>
+		<div class="outer">
+			<div class="middle">
+				<div class="inner">
+					<canvas class="canvas" id="cH"></canvas>
+					<canvas class="canvas" id="ch"></canvas>
+					<canvas class="canvas" id="cM"></canvas>
+					<canvas class="canvas" id="cm"></canvas>
+				</div>
+			</div>
+		</div>
+		<script type='text/javascript'>
+			var cH = document.getElementById('cH');
+			var ch = document.getElementById('ch');
+			var cM = document.getElementById('cM');
+			var cm = document.getElementById('cm');
+
+			var dim = window.innerWidth/4 * 0.75;
+			var colors = [
+			"#1abc9c", "#16a085", "#2ecc71", "#27ae60",
+			"#3498db", "#2980b9", "#9b59b6", "#8e44ad",
+			"#34495e", "#2c3e50", "#f1c40f", "#f39c12",
+			"#e67e22", "#d35400", "#e74c3c", "#c0392b",
+			"#bdc3c7", "#95a5a6", "#7f8c8d"	];
+
+			cH.width = dim;
+			cH.height = dim;
+			ch.width = dim;
+			ch.height = dim;
+			cM.width = dim;
+			cM.height = dim;
+			cm.width = dim;
+			cm.height = dim;
+
+			function dragon(x,y,a,b,n,ctx,color) {
+			  var u = (x + a) / 2 - (b - y) / 2;
+			  var v = (y + b) / 2 + (a - x) / 2 ;
+			  if (n == 0) { 
+			    ctx.strokeStyle = color;
+			    ctx.beginPath();
+			    ctx.moveTo(x,y);
+			    ctx.lineTo(a,b);
+			    ctx.lineWidth = 3;
+			    ctx.closePath();
+			    ctx.stroke();
+			  }
+			  else {
+			    dragon(x,y,u,v,n-1,ctx,color);
+			    dragon(a,b,u,v,n-1,ctx,color);
+			  }
+			  
+			}
+
+			function drawDragon(canvas, num) {
+				ctx = canvas.getContext('2d');
+				color = colors[Math.floor(Math.random()*(colors.length))];
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				dragon(dim*0.3, dim*0.3, dim-dim*0.3, dim-dim*0.3, num, ctx, color);
+			}
+
+			function setClock() {
+				date = new Date();
+				H = Math.floor(date.getHours()%12/10);
+				h = date.getHours()%12-H*10;
+				M = Math.floor(date.getMinutes()/10);
+				m = date.getMinutes()-M*10;
+				drawDragon(cH, H);
+				drawDragon(ch, h);
+				drawDragon(cM, M);
+				drawDragon(cm, m);
+
+				setTimeout(setClock, 1000);
+			}
+
+			setClock();
+		</script>
+	</body>
+</html>
