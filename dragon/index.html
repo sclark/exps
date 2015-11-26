@@ -1,0 +1,84 @@
+	<html>
+	<head>
+		<title>Dragon Fractal</title>
+		<style>
+			body {
+			  overflow: hidden;
+			  background: #000;
+			}
+			#canvas {
+				display: none;
+			}
+			#img{
+			    position: absolute;
+			    margin: auto;
+			    top: 0;
+			    left: 0;
+			    right: 0;
+			    bottom: 0;
+			}
+		</style>
+		<script src="http://sclark.io/logo.js"></script>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<img id="img"></img>
+		<script type='text/javascript'>
+			var canvas = document.getElementById('canvas');
+			var img = document.getElementById('img');
+			var dim = Math.min(window.innerWidth, window.innerHeight);
+			var ctx = canvas.getContext('2d');
+
+			var max = 17;
+			var colors = [
+			"#1abc9c", "#16a085", "#2ecc71", "#27ae60",
+			"#3498db", "#2980b9", "#9b59b6", "#8e44ad",
+			"#34495e", "#2c3e50", "#f1c40f", "#f39c12",
+			"#e67e22", "#d35400", "#e74c3c", "#c0392b",
+			"#bdc3c7", "#95a5a6", "#7f8c8d"	];
+			var curcolor;
+			var cur = 0;
+			var dcur = 1;
+			canvas.width = dim;
+			canvas.height = dim;
+
+			function dragon(x,y,a,b,n) {
+			  var u = (x + a) / 2 - (b - y) / 2;
+			  var v = (y + b) / 2 + (a - x) / 2 ;
+			  if (n == 0) { 
+			    ctx.strokeStyle = curcolor;
+			    ctx.beginPath();
+			    ctx.moveTo(x,y);
+			    ctx.lineTo(a,b);
+			    ctx.closePath();
+			    ctx.stroke();
+			  }
+			  else {
+			    dragon(x,y,u,v,n-1);
+			    dragon(a,b,u,v,n-1);
+			  }
+			  
+			}
+
+			function drawDragon() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				
+				curcolor = colors[Math.floor(Math.random()*(max))];
+				ctx.font = "50px monospace";
+				ctx.fillStyle = curcolor;
+				txt = "n = "+cur;
+				ctx.fillText(txt, dim-0.2*dim-ctx.measureText(txt).width, 0.2*dim);
+				
+				dragon(dim*0.3, dim*0.3, dim-dim*0.3, dim-dim*0.3, cur);
+				img.src = canvas.toDataURL();
+				
+				if (cur >= max) dcur = -1;
+				else if (cur <= 0) dcur = 1;
+				cur+=dcur;
+				setTimeout(drawDragon, 1000);
+			}
+
+			drawDragon();
+		</script>
+	</body>
+</html>
