@@ -9,4 +9,4 @@ This is a repository full of some of my smaller web experiments.
 + [life](http://sclark.io/exps/life): game of life simulation
 + [plotter](http://sclark.io/exps/plotter): cool 4D plotter
 + [tree](http://sclark.io/exps/tree): playing with a binary tree
-+ [triangle](http://sclark.io/exps/triangle): I like triangles a lot
++ [triangles](http://sclark.io/exps/triangles): I like triangles a lot

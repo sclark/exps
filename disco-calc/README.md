@@ -1,7 +1,7 @@
-# [disco-calc](http://sclark.io/disco-calc "Disco Calc")
+# [disco-calc](http://sclark.io/exps/disco-calc "Disco Calc")
 
 This is an online version of Sam's Disco Calculator as seen on Matt Parker's standupmaths YouTube channel during MathsJam Weekend 2015.
-The calculator is avaliable [here](http://sclark.io/disco-calc "Disco Calc").
+The calculator is avaliable [here](http://sclark.io/exps/disco-calc "Disco Calc").
 
 [![Sam's Disco Calculator](http://img.youtube.com/vi/YfIQ7ktFM1g/0.jpg)](https://www.youtube.com/watch?v=YfIQ7ktFM1g "Sam's Disco Calculator")
 
