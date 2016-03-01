@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script src="alerts.js"></script>
+        <link rel="stylesheet" type="text/css" href="alerts.css">
+        <style>
+            @import url("http://overpass-30e2.kxcdn.com/overpass.css");
+            body {
+                font-family: Overpass, sans-serif;
+            }
+            .code {
+                font-family: monospace;
+                margin: 5px;
+                padding: 3px;
+                color: #c7254e;
+                background-color: #f9f2f4;
+                border-radius: 3px;
+            }
+        </style>
+        <script>
+            window.addEventListener('load', function() {
+                Alerts.showAlert("Hello alerts.js!", 10000);
+            });
+        </script>
+    </head>
+    <body>
+        <h1>alerts.js</h1>
+        <p>alerts.js is highly customizable and styleable light weight solution for displaying in page alerts to users. To use alerts.js just include the alerts.js file and optionally the alerts.css file:</p>
+        <ul>
+            <li>alerts.js (required): <span class="code">&lt;script src="alerts.js"&gt;&lt;/script&gt;</span></li>
+            <li>alerts.css (optional): <span class="code">&lt;link rel="stylesheet" type="text/css" href="alerts.css"&gt;</span></li>
+        </ul>
+    </body>
+</html>
