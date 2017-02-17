@@ -1,0 +1,231 @@
+<html>
+	<head>
+
+		<title>Hill Climbing Photo Generator</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+		<style>
+
+			html {
+				height: 100%;
+				width: 100%;
+			}
+
+			body {
+				height: 100%;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-family: 'Roboto', sans-serif;
+				background-color: #eaebec;
+			}
+
+			canvas {
+				width: 300px;
+				height: 300px;
+				border-radius: 5px;
+				margin: 10px;
+			}
+
+			img {
+				display: none;
+			}
+
+			.card {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+				align-items: center;
+				background-color: white;
+				border-radius: 5px;
+				padding: 20px;
+			}
+
+			.card h1 {
+				margin: 0 0 5px 0;
+			}
+
+			.row {
+				width: 100%;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				align-items: center;
+			}
+
+			#stats {
+				flex-grow: 1;
+			}
+
+			#stats p {
+				margin: 10px 10px 0 10px;
+			}
+
+			.btn {
+				text-decoration: none;
+				text-align: center;
+				background: #07c;
+				color: white;
+				padding: 10px;
+				border-radius: 5px;
+				cursor: pointer;
+				margin: 0 10px;
+			}
+
+		</style>
+
+		<script>
+
+			var blockWidth = 10;
+			var blockHeight = 20;
+			var timeDelay = 10;
+
+			var best;
+			var maxScore;
+			var bestScore;
+
+			var generation = 0;
+			var lastImrpove = 0;
+			var scoreLbl;
+			var generationLbl;
+			var lastImrpoveLbl;
+			var target;
+			var targetCtx;
+			var test;
+			var testCtx;
+
+			function getDataURI(img) {
+				var canvas = document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(img, 0, 0);
+				return canvas.toDataURL("image/png");
+			}
+
+			function getTestData() {
+				return testCtx.getImageData(0, 0, testCanvas.width, testCanvas.height);
+			}
+
+			function getTargetData() {
+				return targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
+			}
+
+			function getRandColor() {
+				var letters = '0123456789ABCDEF';
+				var color = '#';
+				for (var i = 0; i < 6; i++ ) {
+					color += letters[Math.floor(Math.random() * 16)];
+				}
+				return color;
+			}
+
+			function getRandInt(min, max) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+
+			function diff(target, test) {
+				var target = target.data;
+				var test = test.data;
+				var sumOfDiff = 0;
+				for (var i = 0; i < Math.min(test.length, target.length); i += 4) {
+					sumOfDiff += Math.pow(target[i  ] - test[i  ], 2); // red
+					sumOfDiff += Math.pow(target[i+1] - test[i+1], 2); // green
+					sumOfDiff += Math.pow(target[i+2] - test[i+2], 2); // blue
+					// i+3 is alpha (the fourth element)
+				}
+				return sumOfDiff;
+			}
+
+			function improve() {
+				testCtx.putImageData(best, 0, 0);
+				testCtx.fillStyle = getRandColor();
+				testCtx.fillRect(getRandInt(0,test.width), getRandInt(0,test.height), blockWidth, blockHeight);
+
+				var score = diff(getTargetData(), getTestData());
+				if (score < bestScore) {
+					best = getTestData();
+					bestScore = score;
+					lastImrpove = 0;
+				}
+
+				generation += 1;
+				lastImrpove += 1;
+
+				testCtx.putImageData(best, 0, 0);
+				scoreLbl.innerText = "Score: " + (Math.round((1-(bestScore/maxScore))*10000)/100).toString() + "%";
+				generationLbl.innerText = "Generation: " + generation.toString();
+				lastImrpoveLbl.innerText = "Last Improvement: " + lastImrpove.toString();
+
+				setTimeout(improve, timeDelay);
+			}
+
+			var img = new Image();
+			img.addEventListener('load', function(e) {
+				document.getElementById("targetImg").src = getDataURI(e.target);
+
+				// get variables
+				target = document.getElementById("targetCanvas");
+				targetCtx = target.getContext("2d");
+				target.width = target.clientWidth;
+				target.height = target.clientHeight;
+
+				test = document.getElementById("testCanvas");
+				testCtx = test.getContext("2d");
+				test.width = test.clientWidth;
+				test.height = test.clientHeight;
+
+				generationLbl = document.getElementById("generation");
+				scoreLbl = document.getElementById("score");
+				lastImrpoveLbl = document.getElementById("lastImrpove");
+
+				// draw image on targetCanvas
+				var targetImg = document.getElementById("targetImg");
+				targetCtx.drawImage(targetImg, 0,0, targetImg.width, targetImg.height, 0, 0, target.width, target.height);
+
+				// reset test canvas
+				testCtx.fillStyle = "white";
+				testCtx.fillRect(0, 0, test.width, test.height);
+				best = getTestData();
+				maxScore = diff(getTargetData(), getTestData());
+				bestScore = maxScore;
+
+				improve();
+			});
+			img.setAttribute('crossOrigin', 'anonymous');
+
+			window.addEventListener('load', function() {
+				document.getElementById("loadImg").addEventListener('click', function() {
+					img.src = prompt("Image?");
+				});
+			});
+			
+		</script>
+
+	</head>
+
+	<body>
+
+		<div class="card">
+			<h1>Hill Climbing Photo Generator</h1>
+			<div class="row">
+				<canvas id="testCanvas"></canvas>
+				<canvas id="targetCanvas"></canvas>
+			</div>
+			<div class="row">
+				<div id="stats">
+					<p id="generation">Generation: -</p>
+					<p id="score">Score: -%</p>
+					<p id="lastImrpove">Last Improvement: -</p>
+				</div>
+				<div>
+					<a id="loadImg" class="btn">Choose an image</a>
+				</div>
+			</div>
+		</div>
+		<img id="targetImg" src="">
+
+	</body>
+</html>
