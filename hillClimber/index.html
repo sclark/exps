@@ -29,7 +29,7 @@
 				margin: 10px;
 			}
 
-			img {
+			img, #loadImg {
 				display: none;
 			}
 
@@ -45,6 +45,11 @@
 
 			.card h1 {
 				margin: 0 0 5px 0;
+			}
+
+			.card h1 a {
+				text-decoration: none;
+				color: inherit;
 			}
 
 			.row {
@@ -85,6 +90,7 @@
 			var best;
 			var maxScore;
 			var bestScore;
+			var timeout = -1;
 
 			var generation = 0;
 			var lastImrpove = 0;
@@ -159,7 +165,7 @@
 				generationLbl.innerText = "Generation: " + generation.toString();
 				lastImrpoveLbl.innerText = "Last Improvement: " + lastImrpove.toString();
 
-				setTimeout(improve, timeDelay);
+				tmieout = setTimeout(improve, timeDelay);
 			}
 
 			var img = new Image();
@@ -194,11 +200,18 @@
 
 				improve();
 			});
-			img.setAttribute('crossOrigin', 'anonymous');
 
 			window.addEventListener('load', function() {
-				document.getElementById("loadImg").addEventListener('click', function() {
-					img.src = prompt("Image?");
+				document.getElementById("loadImg").addEventListener('change', function(e) {
+					if (timeout != -1) clearTimeout(timeout);
+
+					var file = e.target.files[0];
+					var url = window.URL || window.webkitURL;
+					var src = url.createObjectURL(file);
+					img.src = src;
+					img.addEventListener('load', function() {
+						url.revokeObjectURL(src);
+					});
 				});
 			});
 			
@@ -209,7 +222,7 @@
 	<body>
 
 		<div class="card">
-			<h1>Hill Climbing Photo Generator</h1>
+			<h1><a href=".">Hill Climbing Photo Generator</a></h1>
 			<div class="row">
 				<canvas id="testCanvas"></canvas>
 				<canvas id="targetCanvas"></canvas>
@@ -221,7 +234,8 @@
 					<p id="lastImrpove">Last Improvement: -</p>
 				</div>
 				<div>
-					<a id="loadImg" class="btn">Choose an image</a>
+					<input type="file" id="loadImg" accept="image/*">
+					<label for="loadImg" class="btn">Choose an image</label>
 				</div>
 			</div>
 		</div>
