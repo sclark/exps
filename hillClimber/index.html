@@ -5,6 +5,8 @@
 
 		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
 		<style>
 
 			html {
@@ -76,7 +78,7 @@
 				padding: 10px;
 				border-radius: 5px;
 				cursor: pointer;
-				margin: 0 10px;
+				margin-right: 10px;
 			}
 
 		</style>
@@ -120,12 +122,11 @@
 			}
 
 			function getRandColor() {
-				var letters = '0123456789ABCDEF';
-				var color = '#';
-				for (var i = 0; i < 6; i++ ) {
-					color += letters[Math.floor(Math.random() * 16)];
-				}
-				return color;
+				var r = Math.floor(Math.random()*256);
+				var g = Math.floor(Math.random()*256);
+				var b = Math.floor(Math.random()*256);
+				var a = Math.random();
+				return "rgba("+r+","+g+","+b+","+a+")";
 			}
 
 			function getRandInt(min, max) {
@@ -140,7 +141,7 @@
 					sumOfDiff += Math.pow(target[i  ] - test[i  ], 2); // red
 					sumOfDiff += Math.pow(target[i+1] - test[i+1], 2); // green
 					sumOfDiff += Math.pow(target[i+2] - test[i+2], 2); // blue
-					// i+3 is alpha (the fourth element)
+					sumOfDiff += Math.pow(target[i+3] - test[i+3], 2); // alpha
 				}
 				return sumOfDiff;
 			}
@@ -165,7 +166,7 @@
 				generationLbl.innerText = "Generation: " + generation.toString();
 				lastImrpoveLbl.innerText = "Last Improvement: " + lastImrpove.toString();
 
-				tmieout = setTimeout(improve, timeDelay);
+				timeout = setTimeout(improve, timeDelay);
 			}
 
 			var img = new Image();
@@ -183,6 +184,8 @@
 				test.width = test.clientWidth;
 				test.height = test.clientHeight;
 
+				generation = 0;
+
 				generationLbl = document.getElementById("generation");
 				scoreLbl = document.getElementById("score");
 				lastImrpoveLbl = document.getElementById("lastImrpove");
@@ -199,7 +202,11 @@
 				bestScore = maxScore;
 
 				improve();
+
+				document.getElementById("playBtn").style.display = "inline";
 			});
+
+
 
 			window.addEventListener('load', function() {
 				document.getElementById("loadImg").addEventListener('change', function(e) {
@@ -212,6 +219,20 @@
 					img.addEventListener('load', function() {
 						url.revokeObjectURL(src);
 					});
+				});
+
+				document.getElementById("playBtn").addEventListener('click', function() {
+					if (timeout != -1) {
+						clearTimeout(timeout);
+						timeout = -1;
+						document.getElementById("playBtnPlay").style.display = "inline-block";
+						document.getElementById("playBtnPause").style.display = "none";
+					}
+					else {
+						document.getElementById("playBtnPlay").style.display = "none";
+						document.getElementById("playBtnPause").style.display = "inline-block";
+						improve();
+					}
 				});
 			});
 			
@@ -234,6 +255,7 @@
 					<p id="lastImrpove">Last Improvement: -</p>
 				</div>
 				<div>
+					<a id="playBtn" style="display: none" class="btn"><i id="playBtnPlay" class="fa fa-play" style="display: none" aria-hidden="true"></i><i id="playBtnPause" class="fa fa-pause" aria-hidden="true"></i></a>
 					<input type="file" id="loadImg" accept="image/*">
 					<label for="loadImg" class="btn">Choose an image</label>
 				</div>
