@@ -15,6 +15,7 @@
 			}
 
 			body {
+				margin: 0;
 				height: 100%;
 				width: 100%;
 				display: flex;
@@ -172,43 +173,44 @@
 			var img = new Image();
 			img.addEventListener('load', function(e) {
 				document.getElementById("targetImg").src = getDataURI(e.target);
-
-				// get variables
-				target = document.getElementById("targetCanvas");
-				targetCtx = target.getContext("2d");
-				target.width = target.clientWidth;
-				target.height = target.clientHeight;
-
-				test = document.getElementById("testCanvas");
-				testCtx = test.getContext("2d");
-				test.width = test.clientWidth;
-				test.height = test.clientHeight;
-
-				generation = 0;
-
-				generationLbl = document.getElementById("generation");
-				scoreLbl = document.getElementById("score");
-				lastImrpoveLbl = document.getElementById("lastImrpove");
-
-				// draw image on targetCanvas
-				var targetImg = document.getElementById("targetImg");
-				targetCtx.drawImage(targetImg, 0,0, targetImg.width, targetImg.height, 0, 0, target.width, target.height);
-
-				// reset test canvas
-				testCtx.fillStyle = "white";
-				testCtx.fillRect(0, 0, test.width, test.height);
-				best = getTestData();
-				maxScore = diff(getTargetData(), getTestData());
-				bestScore = maxScore;
-
-				improve();
-
-				document.getElementById("playBtn").style.display = "inline";
 			});
 
 
 
 			window.addEventListener('load', function() {
+				document.getElementById("targetImg").addEventListener('load', function() {
+					target = document.getElementById("targetCanvas");
+					targetCtx = target.getContext("2d");
+					target.width = target.clientWidth;
+					target.height = target.clientHeight;
+
+					test = document.getElementById("testCanvas");
+					testCtx = test.getContext("2d");
+					test.width = test.clientWidth;
+					test.height = test.clientHeight;
+
+					generation = 0;
+
+					generationLbl = document.getElementById("generation");
+					scoreLbl = document.getElementById("score");
+					lastImrpoveLbl = document.getElementById("lastImrpove");
+
+					// draw image on targetCanvas
+					var targetImg = document.getElementById("targetImg");
+					targetCtx.drawImage(targetImg, 0,0, targetImg.width, targetImg.height, 0, 0, target.width, target.height);
+
+					// reset test canvas
+					testCtx.fillStyle = "white";
+					testCtx.fillRect(0, 0, test.width, test.height);
+					best = getTestData();
+					maxScore = diff(getTargetData(), getTestData());
+					bestScore = maxScore;
+
+					improve();
+
+					document.getElementById("playBtn").style.display = "inline";
+				});
+
 				document.getElementById("loadImg").addEventListener('change', function(e) {
 					if (timeout != -1) clearTimeout(timeout);
 
@@ -235,7 +237,7 @@
 					}
 				});
 			});
-			
+
 		</script>
 
 	</head>
